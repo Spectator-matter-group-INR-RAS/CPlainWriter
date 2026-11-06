@@ -1,0 +1,248 @@
+
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 13,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "generator": "Unix Makefiles",
+            "cacheVariables": {
+                "BUILD_TESTING": "OFF",
+                "CMAKE_COLOR_DIAGNOSTICS": true
+            }
+        },
+        {
+            "name": "default",
+            "displayName": "Default",
+            "inherits": "base",
+            "errors": {
+                "dev": true,
+                "deprecated": true
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true
+            }
+        },
+        {
+            "name": "release",
+            "displayName": "Release",
+            "inherits": "base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "release-test",
+            "displayName": "Release with Tests",
+            "inherits": "release",
+            "cacheVariables": {
+                "BUILD_TESTING": "ON"
+            }
+        },
+	{
+            "name": "default-test",
+            "displayName": "Default with Tests",
+            "inherits": "default",
+            "cacheVariables": {
+                "BUILD_TESTING": "ON"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "default",
+            "displayName": "Default Build",
+            "configurePreset": "default"
+        },
+        {
+            "name": "release",
+            "displayName": "Release Build",
+            "configurePreset": "release"
+        },
+        {
+            "name": "release-test",
+            "displayName": "Release Test Build",
+            "configurePreset": "release-test"
+        },
+	{
+            "name": "default-test",
+            "displayName": "Default with Tests",
+            "configurePreset": "default-test"
+        },
+        {
+            "name": "clang-tidy-check",
+            "displayName": "Check clang-tidy",
+            "configurePreset": "default-test",
+	    "targets": ["clang-tidy-check"]
+        },
+        {
+            "name": "tidy-fix",
+            "displayName": "Check and fix clang-tidy",
+            "configurePreset": "default-test",
+	    "targets": ["clang-tidy-fix"]
+        },
+        {
+            "name": "clang-format-check",
+            "displayName": "Check clang-format",
+            "configurePreset": "default",
+            "targets": ["clang-format-check"]
+        },
+        {
+            "name": "clang-format-fix",
+            "displayName": "Fix clang-format",
+            "configurePreset": "default",
+            "targets": ["clang-format-fix"]
+        },
+        {
+            "name": "cmake-format-check",
+            "displayName": "Check cmake-format",
+            "configurePreset": "default",
+            "targets": ["cmake-format-check"]
+        },
+        {
+            "name": "cmake-format-fix",
+            "displayName": "Fix cmake-format",
+            "configurePreset": "default",
+            "targets": ["cmake-format-fix"]
+        },
+        {
+            "name": "format-check",
+            "displayName": "Check all linters",
+            "configurePreset": "default-test",
+            "targets": [
+                "clang-format-check",
+                "cmake-format-check",
+		"clang-tidy-check"
+            ]
+        },
+        {
+            "name": "format-fix",
+            "displayName": "Fix all linters",
+            "configurePreset": "default-test",
+            "targets": [
+                "clang-format-fix",
+                "cmake-format-fix",
+		"clang-tidy-fix"
+            ]
+        },
+        {
+            "name": "default-install",
+            "displayName": "Install the default configuration",
+            "configurePreset": "default",
+            "inherits": "default",
+            "targets": ["install"]
+        },
+        {
+            "name": "release-install",
+            "displayName": "Install the release configuration",
+            "configurePreset": "release",
+            "inherits": "release",
+            "targets": ["install"]
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "default",
+            "displayName": "Run Debug Tests",
+            "configurePreset": "default-test",
+            "output": {
+                "outputOnFailure": true
+            }
+        },
+        {
+            "name": "release",
+            "displayName": "Run Release Tests",
+            "configurePreset": "release-test",
+            "output": {
+                "outputOnFailure": true
+            }
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "default",
+            "displayName": "Default Workflow",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "default"
+                },
+                {
+                    "type": "build",
+                    "name": "default"
+                }
+            ]
+        },
+        {
+            "name": "default-test",
+            "displayName": "Test Workflow",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "default-test"
+                },
+                {
+                    "type": "build",
+                    "name": "default-test"
+                },
+                {
+                    "type": "test",
+                    "name": "default"
+                }
+            ]
+        },
+        {
+            "name": "format-check",
+            "displayName": "Check All Linters Workflow",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "default-test"
+                },
+                {
+                    "type": "build",
+                    "name": "format-check"
+                }
+            ]
+        },
+        {
+            "name": "format-fix",
+            "displayName": "Fix All Linters Workflow",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "default-test"
+                },
+                {
+                    "type": "build",
+                    "name": "format-fix"
+                }
+            ]
+        },
+        {
+            "name": "release-test",
+            "displayName": "Release Test Workflow",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "release-test"
+                },
+                {
+                    "type": "build",
+                    "name": "release-test"
+                },
+                {
+                    "type": "test",
+                    "name": "release"
+                }
+            ]
+        }
+    ]
+}
